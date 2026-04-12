@@ -86,7 +86,7 @@ const Index = () => {
         </div>
         <div className="flex items-center gap-4 ml-5">
           <p className="font-mono text-xs text-muted-foreground">
-            Instrument Landing System — Localizer & Glideslope Guidance
+            LTFM RWY 34R — ILS Approach
           </p>
           <button
             onClick={() => setAutoland((a) => !a)}
@@ -114,8 +114,8 @@ const Index = () => {
             <CDIInstrument
               localizerDeviation={localizerDeviation}
               glideslopeDeviation={glideslopeDeviation}
-              frequency="111.70"
-              course={274}
+              frequency="109.30"
+              course={344}
             />
           </div>
           <BeamStrengthDisplay localizerDeviation={localizerDeviation} glideslopeDeviation={glideslopeDeviation} />

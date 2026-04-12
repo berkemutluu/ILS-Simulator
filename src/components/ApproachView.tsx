@@ -39,6 +39,9 @@ export default function ApproachView({ aircraftX, aircraftY, onAircraftMove }: A
   const acX = aircraftX * 500;
   const acY = aircraftY * 400;
 
+  // Localizer deviation for PAPI coloring
+  const glideslopeDeviation = (0.5 - aircraftY) * 2;
+
   // Marker beacon positions
   const markers = [
     { name: "IM", y: runwayTopY - 22, color: "hsl(var(--foreground))" },
@@ -94,7 +97,7 @@ export default function ApproachView({ aircraftX, aircraftY, onAircraftMove }: A
           </g>
         ))}
 
-        {/* Runway */}
+        {/* Runway - clean, no touchdown zone or white lines */}
         <polygon
           points={`${rwTopLeft},${runwayTopY} ${rwTopRight},${runwayTopY} ${rwBotRight},${runwayBottomY} ${rwBotLeft},${runwayBottomY}`}
           fill="hsl(var(--ils-horizon))"
@@ -102,60 +105,33 @@ export default function ApproachView({ aircraftX, aircraftY, onAircraftMove }: A
           strokeWidth={1}
         />
 
-        {/* Threshold markings (piano keys) */}
-        {[-3, -2, -1, 0, 1, 2, 3].map((i) => {
-          const cx = 250;
-          const xOffset = i * 4;
-          return (
-            <line
-              key={`th-${i}`}
-              x1={cx + xOffset}
-              y1={runwayTopY + 2}
-              x2={cx + xOffset}
-              y2={runwayTopY + 18}
-              stroke="hsl(var(--foreground))"
-              strokeWidth={2}
-              opacity={0.7}
-            />
-          );
-        })}
-
-        {/* Threshold line */}
-        <line x1={rwTopLeft + 2} y1={runwayTopY + 1} x2={rwTopRight - 2} y2={runwayTopY + 1} stroke="hsl(var(--foreground))" strokeWidth={2} opacity={0.6} />
-
-        {/* Touchdown zone markings */}
-        {[1, 2, 3].map((i) => {
-          const y = runwayTopY + 25 + i * 25;
-          const w = 4 - i * 0.5;
-          return (
-            <g key={`tdz-${i}`}>
-              <rect x={244 - w * 2} y={y} width={w} height={10} fill="hsl(var(--foreground))" opacity={0.5} />
-              <rect x={256 + w} y={y} width={w} height={10} fill="hsl(var(--foreground))" opacity={0.5} />
-            </g>
-          );
-        })}
-
         {/* Runway centerline dashes */}
         {Array.from({ length: 10 }, (_, i) => {
-          const t = (i + 4) / 16;
+          const t = (i + 2) / 14;
           const y1 = runwayTopY + t * (runwayBottomY - runwayTopY);
           const y2 = y1 + 12;
           return (
-            <line key={`cl-${i}`} x1={250} y1={y1} x2={250} y2={Math.min(y2, runwayBottomY - 10)} stroke="hsl(var(--foreground))" strokeWidth={1.5} opacity={0.4} />
+            <line key={`cl-${i}`} x1={250} y1={y1} x2={250} y2={Math.min(y2, runwayBottomY - 10)} stroke="hsl(var(--muted-foreground))" strokeWidth={1} opacity={0.3} />
           );
         })}
 
-        {/* Aiming point markings (big rectangles) */}
-        <rect x={241} y={runwayTopY + 60} width={4} height={20} fill="hsl(var(--foreground))" opacity={0.5} />
-        <rect x={255} y={runwayTopY + 60} width={4} height={20} fill="hsl(var(--foreground))" opacity={0.5} />
-
-        {/* PAPI lights (beside runway) */}
-        {[0, 1, 2, 3].map((i) => (
-          <g key={`papi-${i}`}>
-            <circle cx={rwTopRight + 15} cy={runwayTopY + 10 + i * 8} r={3} fill="hsl(var(--ils-red))" opacity={0.6} />
-            <circle cx={rwTopLeft - 15} cy={runwayTopY + 10 + i * 8} r={3} fill="hsl(0 0% 90%)" opacity={0.6} />
-          </g>
-        ))}
+        {/* PAPI lights — perpendicular to runway, on left side */}
+        {[0, 1, 2, 3].map((i) => {
+          const papiY = runwayTopY + 30;
+          const threshold = (i - 1.5) * 0.25;
+          const isRed = glideslopeDeviation < threshold;
+          return (
+            <circle
+              key={`papi-${i}`}
+              cx={rwTopLeft - 20 - i * 10}
+              cy={papiY}
+              r={3}
+              fill={isRed ? "hsl(var(--ils-red))" : "hsl(0 0% 90%)"}
+              opacity={0.85}
+              style={{ filter: `drop-shadow(0 0 3px ${isRed ? "hsl(0, 70%, 55%)" : "hsl(0, 0%, 90%)"})` }}
+            />
+          );
+        })}
 
         {/* Localizer antenna */}
         <g transform={`translate(250, ${runwayBottomY + 5})`}>
@@ -188,10 +164,10 @@ export default function ApproachView({ aircraftX, aircraftY, onAircraftMove }: A
 
         {/* Labels */}
         <text x={250} y={runwayBottomY + 40} fill="hsl(var(--ils-runway))" fontSize={11} fontFamily="JetBrains Mono" textAnchor="middle">
-          RWY 27L
+          RWY 34R
         </text>
         <text x={250} y={runwayBottomY + 54} fill="hsl(var(--muted-foreground))" fontSize={9} fontFamily="JetBrains Mono" textAnchor="middle">
-          ILS 27L — LOCALIZER BEAM
+          ILS 34R — LOCALIZER BEAM
         </text>
       </svg>
     </div>

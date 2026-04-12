@@ -87,7 +87,7 @@ export default function ApproachView({ aircraftX, aircraftY, onAircraftMove }: A
         {markers.map((m) => (
           <g key={m.name}>
             <line x1={140} y1={m.y} x2={360} y2={m.y} stroke={m.color} strokeWidth={0.5} strokeDasharray="3 5" opacity={0.3} />
-            <rect x={140} y={m.y - 4} width={8} height={8} rx={1} fill={m.color} opacity={0.15} stroke={m.color} strokeWidth={0.5} opacity2={0.4} />
+            <rect x={140} y={m.y - 4} width={8} height={8} rx={1} fill={m.color} opacity={0.15} stroke={m.color} strokeWidth={0.5} />
             <text x={130} y={m.y + 3} fill={m.color} fontSize={8} fontFamily="JetBrains Mono" textAnchor="end" opacity={0.7}>
               {m.name}
             </text>

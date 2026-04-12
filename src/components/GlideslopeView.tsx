@@ -12,7 +12,6 @@ export default function GlideslopeView({ deviation, aircraftY, onAircraftYChange
       if (!onAircraftYChange) return;
       e.currentTarget.setPointerCapture(e.pointerId);
       const rect = e.currentTarget.getBoundingClientRect();
-      const svgX = ((e.clientX - rect.left) / rect.width) * 500;
       const svgY = ((e.clientY - rect.top) / rect.height) * 150;
       // Convert svgY to aircraftY (inverse mapping)
       const newY = Math.max(0, Math.min(1, 1 - (svgY - 20) / 95));

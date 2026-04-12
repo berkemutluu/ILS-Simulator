@@ -6,21 +6,22 @@ import GlideslopeView from "@/components/GlideslopeView";
 import BeamStrengthDisplay from "@/components/BeamStrengthDisplay";
 
 const Index = () => {
-  const [aircraftX, setAircraftX] = useState(0.5);
-  const [aircraftY, setAircraftY] = useState(0.35);
+  const [aircraftX, setAircraftX] = useState(0.5); // lateral position 0-1
+  const [aircraftY, setAircraftY] = useState(0.35); // distance along approach 0-1 (0=far, 1=at runway)
+  const [altitudeOffset, setAltitudeOffset] = useState(0); // -1 to 1, vertical offset from GS
   const [autoland, setAutoland] = useState(false);
   const autolandRef = useRef(false);
   const animFrameRef = useRef<number>();
 
   const handleAircraftMove = useCallback((x: number, y: number) => {
-    if (autolandRef.current) return; // Don't allow manual move during autoland
+    if (autolandRef.current) return;
     setAircraftX(x);
     setAircraftY(y);
   }, []);
 
-  const handleAircraftYChange = useCallback((y: number) => {
+  const handleAltitudeChange = useCallback((offset: number) => {
     if (autolandRef.current) return;
-    setAircraftY(y);
+    setAltitudeOffset(offset);
   }, []);
 
   // Autoland animation
@@ -38,33 +39,30 @@ const Index = () => {
       lastTime = now;
 
       setAircraftX((prev) => {
-        const target = 0.5;
-        const diff = target - prev;
+        const diff = 0.5 - prev;
         return prev + diff * Math.min(1, dt * 1.5);
       });
 
       setAircraftY((prev) => {
-        // Fly from current position toward runway (y=1.0) at steady rate
-        const targetRate = 0.06; // units per second
-        const newY = prev + targetRate * dt;
+        const newY = prev + 0.06 * dt;
         if (newY >= 0.98) {
-          // Landed
           autolandRef.current = false;
           setAutoland(false);
           return 0.98;
         }
-        // Also correct toward glideslope (y where deviation = 0 means y = 0.5 maps to center)
-        // The ideal Y for zero GS deviation is 0.5
-        // But we want to fly the approach, so we smoothly descend
         return newY;
+      });
+
+      setAltitudeOffset((prev) => {
+        return prev + (0 - prev) * Math.min(1, dt * 2);
       });
 
       animFrameRef.current = requestAnimationFrame(animate);
     };
 
-    // Reset to approach start
     setAircraftX(0.38);
     setAircraftY(0.15);
+    setAltitudeOffset(0.3);
     animFrameRef.current = requestAnimationFrame(animate);
 
     return () => {
@@ -73,7 +71,7 @@ const Index = () => {
   }, [autoland]);
 
   const localizerDeviation = (aircraftX - 0.5) * 2;
-  const glideslopeDeviation = (0.5 - aircraftY) * 2;
+  const glideslopeDeviation = altitudeOffset;
 
   return (
     <div className="min-h-screen bg-background p-4 md:p-6">
@@ -86,7 +84,7 @@ const Index = () => {
         </div>
         <div className="flex items-center gap-4 ml-5">
           <p className="font-mono text-xs text-muted-foreground">
-            Instrument Landing System — Localizer & Glideslope Guidance
+            LTFM RWY 34R — ILS Approach
           </p>
           <button
             onClick={() => setAutoland((a) => !a)}
@@ -102,33 +100,30 @@ const Index = () => {
       </header>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 max-w-[1400px] mx-auto">
-        {/* Left: Approach View + Glideslope */}
         <div className="lg:col-span-7 space-y-4">
           <ApproachView aircraftX={aircraftX} aircraftY={aircraftY} onAircraftMove={handleAircraftMove} />
-          <GlideslopeView deviation={glideslopeDeviation} aircraftY={aircraftY} onAircraftYChange={handleAircraftYChange} />
+          <GlideslopeView deviation={glideslopeDeviation} aircraftY={aircraftY} onAltitudeChange={handleAltitudeChange} />
         </div>
 
-        {/* Right: CDI + Beam + Info */}
         <div className="lg:col-span-5 space-y-4">
           <div className="flex justify-center">
             <CDIInstrument
               localizerDeviation={localizerDeviation}
               glideslopeDeviation={glideslopeDeviation}
-              frequency="111.70"
-              course={274}
+              frequency="109.30"
+              course={344}
             />
           </div>
           <BeamStrengthDisplay localizerDeviation={localizerDeviation} glideslopeDeviation={glideslopeDeviation} />
           <ApproachInfo locDev={localizerDeviation} gsDev={glideslopeDeviation} />
 
-          {/* Legend */}
           <div className="bg-card border border-border rounded-lg p-4 space-y-2">
             <h3 className="font-mono text-xs text-primary glow-cyan tracking-widest uppercase">How It Works</h3>
             <p className="font-mono text-[11px] text-muted-foreground leading-relaxed">
               The <span className="text-primary">Localizer</span> provides lateral guidance using 90Hz and 150Hz modulated signals. The <span className="text-ils-green">Glideslope</span> provides vertical guidance on the correct descent path (typically 3°).
             </p>
             <p className="font-mono text-[11px] text-muted-foreground leading-relaxed">
-              <span className="text-accent">Drag the aircraft</span> in either view to see how the CDI instrument, beam strengths, and deviation readings change in real time.
+              <span className="text-accent">Drag the aircraft</span> in the top view for lateral/distance control, or in the side view for altitude only.
             </p>
             <div className="flex gap-4 pt-1">
               <LegendItem color="bg-ils-green" label="On path" />

@@ -31,13 +31,13 @@ export default function ApproachInfo({ locDev, gsDev }: ApproachInfoProps) {
       <h3 className="font-mono text-xs text-primary glow-cyan tracking-widest uppercase">Approach Data</h3>
 
       <div className="grid grid-cols-2 gap-3">
-        <InfoRow label="AIRPORT" value="KLAX" />
-        <InfoRow label="RUNWAY" value="27L" />
-        <InfoRow label="ILS FREQ" value="111.70" />
-        <InfoRow label="COURSE" value="274°" />
+        <InfoRow label="AIRPORT" value="LTFM" />
+        <InfoRow label="RUNWAY" value="34R" />
+        <InfoRow label="ILS FREQ" value="109.30" />
+        <InfoRow label="COURSE" value="344°" />
         <InfoRow label="GS ANGLE" value="3.00°" />
         <InfoRow label="DA/DH" value="200ft" />
-        <InfoRow label="TDZE" value="126ft" />
+        <InfoRow label="TDZE" value="163ft" />
         <InfoRow label="CAT" value="CAT I" />
       </div>
 

@@ -2,56 +2,51 @@ import { useCallback } from "react";
 
 interface GlideslopeViewProps {
   deviation: number; // -1 to 1
-  aircraftY: number; // 0 to 1
-  onAircraftYChange?: (y: number) => void;
+  aircraftY: number; // 0 to 1, distance along approach
+  onAltitudeChange?: (offset: number) => void;
 }
 
-export default function GlideslopeView({ deviation, aircraftY, onAircraftYChange }: GlideslopeViewProps) {
-  const svgToAircraftY = (clientY: number, rect: DOMRect) => {
-    const svgY = ((clientY - rect.top) / rect.height) * 150;
-    // Map vertical position: top of SVG = high altitude (far from runway), bottom = low (close)
-    // aircraftY 0 = far away/high, aircraftY 1 = at runway/low
-    // We only adjust altitude (vertical in side view), not distance
-    return Math.max(0, Math.min(1, (svgY - 20) / 95));
-  };
-
+export default function GlideslopeView({ deviation, aircraftY, onAltitudeChange }: GlideslopeViewProps) {
   const handlePointerDown = useCallback(
     (e: React.PointerEvent<SVGSVGElement>) => {
-      if (!onAircraftYChange) return;
+      if (!onAltitudeChange) return;
       e.currentTarget.setPointerCapture(e.pointerId);
       const rect = e.currentTarget.getBoundingClientRect();
-      // Only adjust vertical — don't change aircraftY (distance), change altitude via deviation
-      const svgY = ((e.clientY - rect.top) / rect.height) * 150;
-      const newAlt = Math.max(0, Math.min(1, 1 - (svgY - 20) / 95));
-      onAircraftYChange(newAlt);
+      updateAltitude(e.clientY, rect);
     },
-    [onAircraftYChange]
+    [onAltitudeChange, aircraftY]
   );
 
   const handlePointerMove = useCallback(
     (e: React.PointerEvent<SVGSVGElement>) => {
-      if (e.buttons !== 1 || !onAircraftYChange) return;
+      if (e.buttons !== 1 || !onAltitudeChange) return;
       const rect = e.currentTarget.getBoundingClientRect();
-      const svgY = ((e.clientY - rect.top) / rect.height) * 150;
-      const newAlt = Math.max(0, Math.min(1, 1 - (svgY - 20) / 95));
-      onAircraftYChange(newAlt);
+      updateAltitude(e.clientY, rect);
     },
-    [onAircraftYChange]
+    [onAltitudeChange, aircraftY]
   );
 
-  // Marker beacon positions (distance from runway)
+  const updateAltitude = (clientY: number, rect: DOMRect) => {
+    if (!onAltitudeChange) return;
+    const svgY = ((clientY - rect.top) / rect.height) * 150;
+    // Calculate GS reference Y at aircraft's current horizontal position
+    const acX = aircraftY * 440 + 40;
+    const gsY = 115 - (acX / 480) * 80;
+    // Convert pointer Y to deviation from GS
+    const offset = Math.max(-1, Math.min(1, (gsY - svgY) / 40));
+    onAltitudeChange(offset);
+  };
+
+  // Marker beacon positions
   const markers = [
     { name: "IM", dist: 0.12, color: "hsl(var(--foreground))" },
     { name: "MM", dist: 0.35, color: "hsl(var(--ils-amber))" },
     { name: "OM", dist: 0.7, color: "hsl(var(--ils-cyan))" },
   ];
 
-  // Aircraft horizontal position based on aircraftY (distance along approach)
-  // aircraftY=0 means far away (left side), aircraftY=1 means at runway (right side)
+  // Aircraft position: distance determines X, deviation determines Y offset from GS line
   const acX = aircraftY * 440 + 40;
-  // GS reference line Y at aircraft's horizontal position
   const gsY = 115 - (acX / 480) * 80;
-  // Aircraft vertical position offset by deviation
   const acY = gsY - deviation * 40;
 
   return (
@@ -83,7 +78,7 @@ export default function GlideslopeView({ deviation, aircraftY, onAircraftYChange
         {/* Runway */}
         <rect x={400} y={110} width={80} height={10} fill="hsl(var(--ils-horizon))" stroke="hsl(var(--ils-runway))" strokeWidth={0.5} />
 
-        {/* PAPI Lights (perpendicular to runway - horizontal row beside runway) */}
+        {/* PAPI Lights */}
         {[0, 1, 2, 3].map((i) => {
           const threshold = (i - 1.5) * 0.25;
           const isRed = deviation < threshold;
@@ -110,7 +105,7 @@ export default function GlideslopeView({ deviation, aircraftY, onAircraftYChange
           );
         })}
 
-        {/* Glideslope beam (3°) */}
+        {/* Glideslope beam */}
         <polygon points="480,115 0,20 0,50" fill="url(#gsBeam)" />
 
         {/* GS centerline */}

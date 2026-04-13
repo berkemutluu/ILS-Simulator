@@ -101,7 +101,7 @@ const Index = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 max-w-[1400px] mx-auto">
         <div className="lg:col-span-7 space-y-4">
-          <ApproachView aircraftX={aircraftX} aircraftY={aircraftY} onAircraftMove={handleAircraftMove} />
+          <ApproachView aircraftX={aircraftX} aircraftY={aircraftY} glideslopeDeviation={glideslopeDeviation} onAircraftMove={handleAircraftMove} />
           <GlideslopeView deviation={glideslopeDeviation} aircraftY={aircraftY} onAltitudeChange={handleAltitudeChange} />
         </div>
 

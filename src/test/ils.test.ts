@@ -13,7 +13,10 @@ describe("ILS helpers", () => {
 
   it("maps a pointer on the rendered glideslope to zero deviation", () => {
     const aircraftX = 260;
-    const rect = new DOMRect(0, 10, 500, 180);
+    const rect = {
+      top: 10,
+      height: 180,
+    } as DOMRect;
     const gsY = getGlideslopeReferenceY(aircraftX);
     const clientY = rect.top + (gsY / 150) * rect.height;
 

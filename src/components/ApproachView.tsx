@@ -1,12 +1,14 @@
 import { useCallback } from "react";
+import { getPapiLights } from "@/lib/ils";
 
 interface ApproachViewProps {
   aircraftX: number;
   aircraftY: number;
+  glideslopeDeviation: number;
   onAircraftMove: (x: number, y: number) => void;
 }
 
-export default function ApproachView({ aircraftX, aircraftY, onAircraftMove }: ApproachViewProps) {
+export default function ApproachView({ aircraftX, aircraftY, glideslopeDeviation, onAircraftMove }: ApproachViewProps) {
   const handlePointerMove = useCallback(
     (e: React.PointerEvent<SVGSVGElement>) => {
       if (e.buttons !== 1) return;
@@ -38,9 +40,7 @@ export default function ApproachView({ aircraftX, aircraftY, onAircraftMove }: A
 
   const acX = aircraftX * 500;
   const acY = aircraftY * 400;
-
-  // Localizer deviation for PAPI coloring
-  const glideslopeDeviation = (0.5 - aircraftY) * 2;
+  const papiLights = getPapiLights(glideslopeDeviation);
 
   // Marker beacon positions
   const markers = [
@@ -116,19 +116,19 @@ export default function ApproachView({ aircraftX, aircraftY, onAircraftMove }: A
         })}
 
         {/* PAPI lights — perpendicular to runway, on left side */}
-        {[0, 1, 2, 3].map((i) => {
+        {papiLights.map((light, i) => {
           const papiY = runwayTopY + 30;
-          const threshold = (i - 1.5) * 0.25;
-          const isRed = glideslopeDeviation < threshold;
+          const isRed = light === "red";
+          const lampColor = isRed ? "hsl(var(--ils-red))" : "hsl(var(--foreground))";
           return (
             <circle
               key={`papi-${i}`}
               cx={rwTopLeft - 20 - i * 10}
               cy={papiY}
               r={3}
-              fill={isRed ? "hsl(var(--ils-red))" : "hsl(0 0% 90%)"}
-              opacity={0.85}
-              style={{ filter: `drop-shadow(0 0 3px ${isRed ? "hsl(0, 70%, 55%)" : "hsl(0, 0%, 90%)"})` }}
+              fill={lampColor}
+              opacity={isRed ? 0.85 : 0.7}
+              style={{ filter: `drop-shadow(0 0 3px ${lampColor})` }}
             />
           );
         })}

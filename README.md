@@ -2,6 +2,8 @@
 
 ILS, bir hava aracının piste yaklaşması sırasında tam olarak hizalanıp alçalmasını sağlayabilmek için tasarlanmıştır. Instrument Meteorological Conditions (IMC) yani sis, yağmur ve kar gibi görüşü olumsuz etkileyen hava koşullarında güvenli bir iniş yapmayı sağlar. ILS’in temel bileşenleri Localizer, Glide Slope ve OM’dir. CAT II ve CAT III ILS için bir tane de IM bulunur. Sistem işlevsel olarak üçe ayrılır: Kılavuz ve yönlendirme sağlayan Localizer ve Glide Slope, mesafe bilgisi sağlayan Marker Beacon’lar ve DME, görsel kerteriz sağlayan yaklaşma, merkez hat ve pist ışıklandırmaları.
 
+[Simülatör'ü deneyin!](https://ilssimulator.lovable.app)
+
 ## Başlıca ILS Bileşenleri:
 
 ## Localizer (ILS Horizontal Guidance)
@@ -67,4 +69,4 @@ ILS Simulator'da istediğiniz şekilde uçak emojisini side view görünümün d
 
 
 
-Teşekkürler <link=lovable.dev>
+Teşekkürler [Loveable IDE](lovable.dev)

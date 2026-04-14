@@ -53,7 +53,7 @@ ILS, ICAO ve FAA tarafından gerekli tüm yer ve hava sistemlerinin çalışır 
 <img width="2158" height="1322" alt="image" src="https://github.com/user-attachments/assets/db09717a-48a7-4081-a40d-e899db824614" />
 
 
-ILS Simulator'da istediğiniz şekilde uçak emojisini side view görünümün de irtifasını ve approach view görünümünde lokasyonunu değiştirebilirsiniz.
+ILS Simulator'da istediğiniz şekilde uçak emojisini side view görünümün de irtifasını ve approach view görünümünde lokasyonunu değiştirebilirsiniz. Böylece uçağın aviyoniklerinin arkaplanda neler yaptığını görebilirsiniz.
 
 
 
@@ -67,4 +67,4 @@ ILS Simulator'da istediğiniz şekilde uçak emojisini side view görünümün d
 
 
 
-
+Teşekkürler <link=lovable.dev>

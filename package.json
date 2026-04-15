@@ -1,8 +1,17 @@
 {
-  "name": "vite_react_shadcn_ts",
-  "private": true,
-  "version": "0.0.0",
+  "name": "ils-simulator",
+  "main": "dist/index.js",
+  "version": "1.0.0",
   "type": "module",
+
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/berkemutluu/ils-simulator.git"
+    },
+  "bugs": {
+    "url": "https://github.com/berkemutluu/ils-simulator/issues"
+    },
+  "homepage": "https://github.com/berkemutluu/ils-simulator#readme",
   "scripts": {
     "dev": "vite",
     "build": "vite build",

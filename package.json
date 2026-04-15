@@ -11,6 +11,11 @@
     "url": "https://github.com/berkemutluu/ils-simulator/issues"
   },
   "homepage": "https://github.com/berkemutluu/ils-simulator#readme",
+
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "name": "@berkemutluu/ils-simulator",
   "scripts": {
     "dev": "vite",
     "build": "vite build",

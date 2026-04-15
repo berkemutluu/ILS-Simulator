@@ -1,7 +1,7 @@
 {
-  "name": "ils-simulator",
+  "name": "@berkemutluu/ils-simulator",
   "main": "dist/index.js",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "type": "module",
   "repository": {
     "type": "git",
@@ -11,11 +11,9 @@
     "url": "https://github.com/berkemutluu/ils-simulator/issues"
   },
   "homepage": "https://github.com/berkemutluu/ils-simulator#readme",
-
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"
   },
-  "name": "@berkemutluu/ils-simulator",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
